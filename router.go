@@ -6,5 +6,5 @@ import (
 )
 
 func router(web *echo.Echo) {
-	web.POST("/register", views.PostRegister)
+	web.POST("/api/users/register", views.PostRegister)
 }
