@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
 
 type APIServer struct {
@@ -14,6 +15,11 @@ type APIServer struct {
 func NewInstance(config *Config) (api *APIServer, err error) {
 	web := echo.New()
 	router(web)
+
+	// logging middleware
+	web.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}\n",
+	}))
 
 	api = &APIServer{
 		config: config,
