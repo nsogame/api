@@ -3,18 +3,29 @@ package api
 import (
 	"log"
 
+	"git.iptq.io/nso/common/models"
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
 
 type APIServer struct {
 	config *Config
+	db     *gorm.DB
 	web    *echo.Echo
 }
 
 func NewInstance(config *Config) (api *APIServer, err error) {
+	db, err := gorm.Open(config.DbProvider, config.DbConnection)
+	if err != nil {
+		return
+	}
+
+	// TODO: remvoe later
+	db.AutoMigrate(&models.User{})
+
 	web := echo.New()
-	router(web)
+	web.Debug = config.Debug
 
 	// logging middleware
 	web.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
@@ -23,8 +34,10 @@ func NewInstance(config *Config) (api *APIServer, err error) {
 
 	api = &APIServer{
 		config: config,
+		db:     db,
 		web:    web,
 	}
+	api.router(web)
 	return
 }
 

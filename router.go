@@ -1,10 +1,22 @@
 package api
 
 import (
-	"git.iptq.io/nso/api/views"
 	"github.com/labstack/echo"
+	validator "gopkg.in/go-playground/validator.v9"
 )
 
-func router(web *echo.Echo) {
-	web.POST("/api/users/register", views.PostRegister)
+type APIValidator struct {
+	validator *validator.Validate
+}
+
+func (av *APIValidator) Validate(i interface{}) error {
+	return av.validator.Struct(i)
+}
+
+func (api *APIServer) router(web *echo.Echo) {
+	web.Validator = &APIValidator{validator: validator.New()}
+
+	v1 := web.Group("/api/v1")
+
+	v1.POST("/users/register", api.PostRegister)
 }
