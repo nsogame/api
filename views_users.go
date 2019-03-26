@@ -14,6 +14,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type UserInfo struct {
+	ID       uint   `json:"id"`
+	Username string `json:"username"`
+}
+
 type LoginInfo struct {
 	Identifier string `json:"identifier" validate:"required"`
 	Password   string `json:"password" validate:"required"`
@@ -51,10 +56,9 @@ func (api *APIServer) PostLogin(c echo.Context) (err error) {
 	sess.Values["user_id"] = user.ID
 	sess.Save(c.Request(), c.Response())
 
-	return c.JSON(http.StatusOK, struct {
-		ID uint `json:"id"`
-	}{
-		ID: user.ID,
+	return c.JSON(http.StatusOK, UserInfo{
+		ID:       user.ID,
+		Username: user.Username,
 	})
 }
 
@@ -118,10 +122,9 @@ func (api *APIServer) PostRegister(c echo.Context) (err error) {
 	}
 	api.db.Create(&user)
 
-	return c.JSON(http.StatusOK, struct {
-		ID uint `json:"id"`
-	}{
-		ID: user.ID,
+	return c.JSON(http.StatusOK, UserInfo{
+		ID:       user.ID,
+		Username: user.Username,
 	})
 }
 
