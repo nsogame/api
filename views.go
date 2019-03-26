@@ -38,7 +38,7 @@ func (api *APIServer) PostRegister(c echo.Context) (err error) {
 	}
 
 	// validate the captcha
-	captchaId := sess.Values["captcha"]
+	captchaId := sess.Values["captcha"].(string)
 	if !captcha.VerifyString(captchaId, info.Captcha) {
 		return fmt.Errorf("Invalid captcha")
 	}
