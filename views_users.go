@@ -83,7 +83,6 @@ func (api *APIServer) PostRegister(c echo.Context) (err error) {
 
 	// validate the captcha
 	captchaId, ok := sess.Values["captcha"]
-	fmt.Println("values", sess.Values)
 	if !ok || !captcha.VerifyString(captchaId.(string), info.Captcha) {
 		return echo.NewHTTPError(http.StatusUnauthorized, "Invalid captcha")
 	}
@@ -105,8 +104,8 @@ func (api *APIServer) PostRegister(c echo.Context) (err error) {
 	}
 
 	// god damn it osu
-	osuDumbHash := md5.Sum(password)
-	osuHash, err := bcrypt.GenerateFromPassword(osuDumbHash[:], bcrypt.DefaultCost)
+	osuDumbHash := fmt.Sprintf("%x", md5.Sum(password))
+	osuHash, err := bcrypt.GenerateFromPassword([]byte(osuDumbHash), bcrypt.DefaultCost)
 	if err != nil {
 		return
 	}
