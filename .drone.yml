@@ -1,0 +1,12 @@
+kind: pipeline
+name: default
+
+workspace:
+  base: /go
+  path: src/git.iptq.io/nso/api
+
+steps:
+- name: build
+  image: go
+  commands:
+  - go build -v ./cmd/api
