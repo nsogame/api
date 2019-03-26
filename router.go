@@ -18,6 +18,7 @@ func (api *APIServer) router(web *echo.Echo) {
 
 	v1 := web.Group("/api/v1")
 
+	v1.POST("/users/login", api.PostLogin)
 	v1.POST("/users/register", api.PostRegister)
 	v1.GET("/users/register/captcha", api.GetRegisterCaptcha)
 }
