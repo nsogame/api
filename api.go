@@ -4,9 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"git.iptq.io/nso/common/models"
+	"git.iptq.io/nso/common"
 	"github.com/gorilla/sessions"
-	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/middleware"
@@ -14,18 +13,15 @@ import (
 
 type APIServer struct {
 	config *Config
-	db     *gorm.DB
+	db     *common.DB
 	web    *echo.Echo
 }
 
 func NewInstance(config *Config) (api *APIServer, err error) {
-	db, err := gorm.Open(config.DbProvider, config.DbConnection)
+	db, err := common.ConnectDB(config.DbProvider, config.DbConnection)
 	if err != nil {
 		return
 	}
-
-	// TODO: remvoe later
-	db.AutoMigrate(&models.User{})
 
 	web := echo.New()
 	web.Debug = config.Debug
@@ -37,7 +33,7 @@ func NewInstance(config *Config) (api *APIServer, err error) {
 	}))
 	web.Use(middleware.Recover())
 	web.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins:     []string{"http://localhost:1234"},
+		AllowOrigins:     []string{"http://localhost:1234", "https://osu.ppy.sh"},
 		AllowMethods:     []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
 		AllowCredentials: true,
 	}))
