@@ -15,8 +15,17 @@ import (
 )
 
 type UserInfo struct {
-	ID       uint   `json:"id"`
-	Username string `json:"username"`
+	ID           uint   `json:"id"`
+	Username     string `json:"username"`
+	UsernameCase string `json:"usernameCase"`
+}
+
+func GetUserInfo(user *models.User) UserInfo {
+	return UserInfo{
+		ID:           user.ID,
+		Username:     user.Username,
+		UsernameCase: user.UsernameCase,
+	}
 }
 
 type LoginInfo struct {
@@ -56,10 +65,7 @@ func (api *APIServer) PostLogin(c echo.Context) (err error) {
 	sess.Values["user_id"] = user.ID
 	sess.Save(c.Request(), c.Response())
 
-	return c.JSON(http.StatusOK, UserInfo{
-		ID:       user.ID,
-		Username: user.Username,
-	})
+	return c.JSON(http.StatusOK, GetUserInfo(&user))
 }
 
 type RegisterInfo struct {
@@ -92,6 +98,7 @@ func (api *APIServer) PostRegister(c echo.Context) (err error) {
 	}
 
 	email := strings.ToLower(info.Email)
+	usernameCase := info.Username
 	username := strings.ToLower(info.Username)
 	password := []byte(info.Password)
 
@@ -114,18 +121,16 @@ func (api *APIServer) PostRegister(c echo.Context) (err error) {
 		return
 	}
 
-	user := &models.User{
-		Email:       email,
-		Username:    username,
-		Password:    string(hash),
-		OsuPassword: string(osuHash),
+	user := models.User{
+		Email:        email,
+		UsernameCase: usernameCase,
+		Username:     username,
+		Password:     string(hash),
+		OsuPassword:  string(osuHash),
 	}
 	api.db.Create(&user)
 
-	return c.JSON(http.StatusOK, UserInfo{
-		ID:       user.ID,
-		Username: user.Username,
-	})
+	return c.JSON(http.StatusOK, GetUserInfo(&user))
 }
 
 func (api *APIServer) GetRegisterCaptcha(c echo.Context) (err error) {
