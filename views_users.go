@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"strings"
 
-	"git.iptq.io/nso/common/models"
 	"github.com/dchest/captcha"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
+	"github.com/nsogame/common/models"
 	"golang.org/x/crypto/bcrypt"
 )
 

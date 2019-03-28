@@ -4,11 +4,11 @@ import (
 	"log"
 	"net/http"
 
-	"git.iptq.io/nso/common"
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/session"
 	"github.com/labstack/echo/middleware"
+	"github.com/nsogame/common"
 )
 
 type APIServer struct {
@@ -18,6 +18,7 @@ type APIServer struct {
 }
 
 func NewInstance(config *Config) (api *APIServer, err error) {
+	// db
 	db, err := common.ConnectDB(config.DbProvider, config.DbConnection)
 	if err != nil {
 		return
@@ -47,6 +48,11 @@ func NewInstance(config *Config) (api *APIServer, err error) {
 	return
 }
 
+func (api *APIServer) Close() {
+	api.db.Close()
+}
+
 func (api *APIServer) Run() {
+	defer api.Close()
 	log.Fatal(api.web.Start(api.config.BindAddr))
 }

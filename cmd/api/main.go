@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"git.iptq.io/nso/api"
+	"github.com/nsogame/api"
 
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
